@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  emailservice_dev:
+    container_name: emailservice_dev
+    image: cloudblueconnect/connect-extension-runner:24.4
+    command: cextrun -d
+    volumes: 
+      - .:/extension
+    env_file:
+      - .emailservice_dev.env
+
+  emailservice_bash:
+    container_name: emailservice_bash
+    image: cloudblueconnect/connect-extension-runner:24.5
+    working_dir: /extension
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/extension
+    env_file:
+      - .emailservice_dev.env
+
+  emailservice_test:
+    container_name: emailservice_test
+    image: cloudblueconnect/connect-extension-runner:24.5
+    working_dir: /extension
+    command: /bin/bash -c "poetry install && pytest --verbose --cov=connect_ext --cov-report=html --cov-report=term-missing:skip-covered"
+    volumes:
+      - .:/extension
+    env_file:
+      - .emailservice_dev.env
